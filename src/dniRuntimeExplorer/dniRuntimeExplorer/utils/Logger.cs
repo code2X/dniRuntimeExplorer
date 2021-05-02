@@ -7,10 +7,12 @@ namespace dniRumtimeExplorer.Utils
     {
         public static void Error(params string[] errors)
         {
+#if DEBUG
             foreach (string err in errors)
             {
                 Console.WriteLine("Error: " + err);
             }
+#endif
         }
 
         public static void Info(params string[] infos)

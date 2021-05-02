@@ -9,7 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ImGui.NETEx\ImGui.NETEx.csproj" />
+    <Reference Include="ImGui.NETEx">
+      <HintPath>..\..\deps\ImGui.NETex.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

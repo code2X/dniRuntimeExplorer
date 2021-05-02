@@ -137,7 +137,9 @@ namespace dniRumtimeExplorer.Drawer
                 }
                 else
                 {
-                    if( ImGui.Selectable(value + "##" + field.ToString()))
+                    ImGui.Text(value);
+                    ImGui.SameLine();
+                    if ( ImGui.ArrowButton("##" + field.ToString(),ImGuiDir.Down))
                     {
                         RuntimeExplorerApp.Instance.FieldValueInputWindow.Show(field, instance);
                     }
@@ -215,7 +217,9 @@ namespace dniRumtimeExplorer.Drawer
             }
             else
             {
-                if (ImGui.Selectable(value + "##" + property.Name))
+                ImGui.Text(value);
+                ImGui.SameLine();
+                if (ImGui.ArrowButton("##" + property.Name, ImGuiDir.Down))
                     RuntimeExplorerApp.Instance.PropertyValueInputWindow.Show(property, classInstance);
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip("Set " + property.Name + " value");

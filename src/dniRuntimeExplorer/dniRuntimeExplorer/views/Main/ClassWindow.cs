@@ -24,6 +24,8 @@ namespace dniRumtimeExplorer.Window
 
     public class ClassWindow : ImGuiEx.Window
     {
+        public override string WindowName => "Class Explorer";
+
         //Views
         TabBarView m_TabBarView = new TabBarView();
         List<IClassInfoView> m_ClassSubViews = new List<IClassInfoView>();
@@ -192,9 +194,6 @@ namespace dniRumtimeExplorer.Window
                 }
             });
         }
-
-        public override ImGuiWindowFlags WindowFlags => ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar;
-        public override string WindowName => "Class Window";
     }
 
 }

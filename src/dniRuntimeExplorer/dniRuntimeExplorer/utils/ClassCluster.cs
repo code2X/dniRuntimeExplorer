@@ -1,36 +1,41 @@
-﻿using System;
+﻿using dniRumtimeExplorer.Reflection;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
 namespace dniRumtimeExplorer.Utils
 {
+    using ClusterSubDict = SortedDictionary<string, Type>;
+    using ClusterDict = SortedDictionary<string, SortedDictionary<string, Type>>;
+
     /// <summary>
     /// 对程序集中的Class进行分类
     /// </summary>
     public class ClassCluster
     {
-        static SortedDictionary<string, Type> NewClassDict() => new SortedDictionary<string, Type>();
+        static ClusterSubDict NewClassDict() => new ClusterSubDict();
 
         /// <summary>
         /// 主要的Class
         /// </summary>
-        public static SortedDictionary<string, SortedDictionary<string, Type>> MainCluster(SortedDictionary<string, Type> classDict)
+        public static ClusterDict MainClass(ClusterSubDict classDict)
         {
-            var classCluster = new SortedDictionary<string, SortedDictionary<string, Type>>();
-            classCluster.Add("Enum Class", NewClassDict());
-            classCluster.Add("All Class", NewClassDict());
+            var classCluster = new ClusterDict();
+            classCluster.Add("Enum##Class", NewClassDict());
+            classCluster.Add("______##Class", NewClassDict());
 
             //PreProcess UI And Enum
             foreach (var str2type in classDict)
             {              
                 if (str2type.Value.IsEnum)
                 {
-                    classCluster["Enum Class"].Add(str2type.Key, str2type.Value);
+                    classCluster["Enum##Class"].Add(str2type.Key, str2type.Value);
                 }
-                classCluster["All Class"].Add(str2type.Key, str2type.Value);
+                classCluster["______##Class"].Add(str2type.Key, str2type.Value);
             }
 
-            RootClassCluster(ref classCluster, classDict);
+            RootClass(ref classCluster, classDict);
+            SingletonClass(ref classCluster, classDict);
 
             return classCluster;
         }
@@ -38,9 +43,9 @@ namespace dniRumtimeExplorer.Utils
         /// <summary>
         /// 自动对Class的名字进行分类
         /// </summary>
-        public static SortedDictionary<string, SortedDictionary<string, Type>> AutoCluster(SortedDictionary<string, Type> classDict)
+        public static ClusterDict ClassCategory(ClusterSubDict classDict)
         {
-            var classCluster = new SortedDictionary<string, SortedDictionary<string, Type>>();
+            var classCluster = new ClusterDict();
             var OtherDict = NewClassDict();
 
             foreach (var i in classDict)
@@ -58,40 +63,94 @@ namespace dniRumtimeExplorer.Utils
         }
 
         /// <summary>
-        /// 自动对Class的名字进行分类
+        /// 命名空间归类
         /// </summary>
-        public static SortedDictionary<string, SortedDictionary<string, Type>> NamespaceCluster(SortedDictionary<string, Type> classDict)
+        public static ClusterDict NamespaceClasses(ClusterSubDict classDict)
         {
-            var classCluster = new SortedDictionary<string, SortedDictionary<string, Type>>();
-            var OtherDict = NewClassDict();
+            var classCluster = new ClusterDict();
+
+            classCluster.Add("________##", NewClassDict());
 
             foreach (var name2type in classDict)
             {
-                if(classCluster.ContainsKey(name2type.Value.Namespace) == false )
+                //主命名空间
+                if(name2type.Value.Namespace == null)
                 {
-                    classCluster.Add(name2type.Value.Namespace, NewClassDict());
+                    classCluster["________##"].Add(name2type.Key, name2type.Value);
+                }
+                else
+                {
+                    if (classCluster.ContainsKey(name2type.Value.Namespace) == false)
+                    {
+                        classCluster.Add(name2type.Value.Namespace, NewClassDict());
+                    }
+
+                    classCluster[name2type.Value.Namespace].Add(name2type.Key, name2type.Value);
                 }
 
-                classCluster[name2type.Value.Namespace].Add(name2type.Key, name2type.Value);
             }
 
             return classCluster;
         }
 
-        static void RootClassCluster(
-            ref SortedDictionary<string, SortedDictionary<string, Type>> classCluster,
-            SortedDictionary<string, Type> allClass,
+        static void SingletonClass(
+            ref ClusterDict classCluster,
+            ClusterSubDict allClass)
+        {
+            classCluster.Add("Singleton##Class", NewClassDict());
+
+            bool added = false;
+
+            foreach (var class2type in allClass)
+            {
+                added = false;
+
+                if (class2type.Value.IsEnum)
+                    continue;
+
+                PropertyInfo[] propertyInfos = PropertyHelpers.GetStaticPropertys(class2type.Value);
+                FieldInfo[] fieldInfos = FieldHelpers.GetStaticFields(class2type.Value);
+
+                //Seach propertys singleton
+                foreach (PropertyInfo propertyInfo in propertyInfos)
+                {
+                    if(propertyInfo.PropertyType.FullName == class2type.Value.FullName)
+                    {
+                        classCluster["Singleton##Class"].Add(class2type.Key, class2type.Value);
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (added)
+                    continue;
+
+                //Seach fields singleton
+                foreach (FieldInfo fieldInfo in fieldInfos)
+                {
+                    if (fieldInfo.FieldType.FullName == class2type.Value.FullName)
+                    {
+                        classCluster["Singleton##Class"].Add(class2type.Key, class2type.Value);
+                        break;
+                    }
+                }
+            }
+        }
+
+        static void RootClass(
+            ref ClusterDict classCluster,
+            ClusterSubDict allClass,
             uint limit = 5
             )
         {
-            classCluster.Add("Root Class", NewClassDict());
+            classCluster.Add("Root##Class", NewClassDict());
 
             foreach(var class2type in allClass)
             {
                 int num = CountClassInclude(class2type.Value, allClass);
                 if(num > limit)
                 {
-                    classCluster["Root Class"].Add(class2type.Key, class2type.Value);
+                    classCluster["Root##Class"].Add(class2type.Key, class2type.Value);
                 }
             }
         }
@@ -101,14 +160,15 @@ namespace dniRumtimeExplorer.Utils
         /// </summary>
         static int CountClassInclude(
             Type type,
-            SortedDictionary<string, Type> allClass
+            ClusterSubDict allClass
         )
         {
             HashSet<Type> types = new HashSet<Type>();
             int bias = 0;     //
 
-            PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-            FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            
+            PropertyInfo[] propertyInfos = PropertyHelpers.GetAllPropertys(type);
+            FieldInfo[] fieldInfos = FieldHelpers.GetAllFields(type);
 
             //count field class include number
             foreach (FieldInfo fieldInfo in fieldInfos)
@@ -147,12 +207,12 @@ namespace dniRumtimeExplorer.Utils
         }
 
         static void StartNameCluster<T>(
-            ref SortedDictionary<string, SortedDictionary<string, Type>> classCluster,
+            ref ClusterDict classCluster,
             SortedDictionary<string, Type> allClass,
             SortedDictionary<string, T> classDict
             )
         {
-            Dictionary<string, int> startNameCount = StartNameCount(classDict);
+            Dictionary<string, int> startNameCount = CountStartName(classDict);
 
             foreach (var i in startNameCount)
             {
@@ -173,12 +233,12 @@ namespace dniRumtimeExplorer.Utils
         }
 
         static void EndNameCluster<T>(
-            ref SortedDictionary<string, SortedDictionary<string, Type>> classCluster,
+            ref ClusterDict classCluster,
             SortedDictionary<string, Type> allClass,
             SortedDictionary<string, T> classDict
             )
         {
-            Dictionary<string, int> endNameCount = EndNameCount(classDict);
+            Dictionary<string, int> endNameCount = CountEndName(classDict);
 
             foreach (var i in endNameCount)
             {
@@ -198,13 +258,13 @@ namespace dniRumtimeExplorer.Utils
             }
         }
 
-        static Dictionary<string, int> StartNameCount<T>(SortedDictionary<string, T> dict)
+        static Dictionary<string, int> CountStartName<T>(SortedDictionary<string, T> dict)
         {
             Dictionary<string, int> startNameCount = new Dictionary<string, int>();
 
             foreach (var i in dict)
             {
-                string word = fristWord(i.Key);
+                string word = FristWord(i.Key);
                 if (startNameCount.ContainsKey(word))
                 {
                     ++startNameCount[word];
@@ -218,13 +278,13 @@ namespace dniRumtimeExplorer.Utils
             return startNameCount;
         }
 
-        static Dictionary<string, int> EndNameCount<T>(SortedDictionary<string, T> dict)
+        static Dictionary<string, int> CountEndName<T>(SortedDictionary<string, T> dict)
         {
             Dictionary<string, int> endNameCount = new Dictionary<string, int>();
 
             foreach (var i in dict)
             {
-                string word = endWord(i.Key);
+                string word = EndWord(i.Key);
                 if (endNameCount.ContainsKey(word))
                 {
                     ++endNameCount[word];
@@ -238,7 +298,7 @@ namespace dniRumtimeExplorer.Utils
             return endNameCount;
         }
 
-        static string fristWord(string word)
+        static string FristWord(string word)
         {
             if (word.Length > 2)
             {
@@ -253,7 +313,7 @@ namespace dniRumtimeExplorer.Utils
             return word;
         }
 
-        static string endWord(string word)
+        static string EndWord(string word)
         {
             for (int i = word.Length - 1; i >= 0; --i)
             {

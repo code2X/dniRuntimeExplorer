@@ -81,7 +81,9 @@ namespace dniRumtimeExplorer.Window
             return id;
         }
 
-        public override ImGuiTabBarFlags TabBarFlags => ImGuiTabBarFlags.AutoSelectNewTabs | ImGuiTabBarFlags.Reorderable;
+        public override ImGuiTabBarFlags TabBarFlags => 
+            ImGuiTabBarFlags.AutoSelectNewTabs | 
+            ImGuiTabBarFlags.Reorderable;
 
         public override void DrawContent()
         {

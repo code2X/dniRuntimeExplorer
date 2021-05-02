@@ -1,28 +1,26 @@
 ﻿using System;
 using dniRumtimeExplorer.Window;
-using dniRumtimeExplorer;
 using dniRumtimeExplorer.Reflection;
-using dniRumtimeExplorer.Utils;
+using System.Collections.Generic;
 
-    public class RuntimeExplorerApp: ImGuiEx.Application
+namespace dniRumtimeExplorer
+{
+    public class RuntimeExplorerApp : ImGuiEx.Application
     {
+        bool m_bShow = false;
 
-        static RuntimeExplorerApp __instance = null;
+        static RuntimeExplorerApp __instance = new RuntimeExplorerApp();
         public static RuntimeExplorerApp Instance
         {
-            get
-            {
-                if (__instance == null)
-                    __instance = new RuntimeExplorerApp();
-               return __instance;
-            }
+            get => __instance;
             set => __instance = value;
         }
 
-        // Window Views
+        //Main Windows
         ExplorerWindow m_ExplorerWindow = new ExplorerWindow();
         ClassWindow m_ClassWindow = new ClassWindow();
 
+        //Intput Modal Windows
         FieldValueInputWindow m_FieldValueInputWindow = new FieldValueInputWindow();
         PropertyValueInputWindow m_PropertyValueInputWindow = new PropertyValueInputWindow();
         MethodInvokeWindow m_MethodInvokeWindow = new MethodInvokeWindow();
@@ -49,16 +47,15 @@ using dniRumtimeExplorer.Utils;
             }
         }
 
-        bool isShow = true;
-        public bool IsOpen => isShow;
-        public void Open() => isShow = true;
-        public void Close() => isShow = false;
+        public bool IsOpen => m_bShow;
+        public void Open() => m_bShow = true;
+        public void Close() => m_bShow = false;
 
         protected override void OnGui()
         {
-            if (!isShow) return;
-    
-            Caller.Try(() =>
+            if (!m_bShow) return;
+
+            Utils.Caller.Try(() =>
             {
                 ExplorerWindow.OnGui();
                 ClassWindow.OnGui();
@@ -69,18 +66,30 @@ using dniRumtimeExplorer.Utils;
 
                 ArrayInfoWindow.GetInstance().OnGui();
                 ArrayElementInputWindow.GetInstance().OnGui();
+
+                foreach (Callback callback in m_GuiCallbacks)
+                {
+                    callback();
+                }
             });
+        }
+
+        List<Callback> m_GuiCallbacks = new List<Callback>();
+        public void AddGuiFunction(Callback callback)
+        {
+            m_GuiCallbacks.Add(callback);
         }
 
         public bool LoadAssembly(string path)
         {
             Assembler assembler = new Assembler();
             bool res = assembler.Load(path);
-            if(res)
+            if (res)
             {
                 m_ExplorerWindow.AddAssembler(assembler);
             }
             return res;
         }
     }
+}
 
