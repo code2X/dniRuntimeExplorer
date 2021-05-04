@@ -1,6 +1,8 @@
 .Net Imgui Rutime Assembly Explorer
 
-.Net Imgui 运行时Dll程序集数据查看器
+.Net 运行时程序集数据分析修改器
 
-![捕获](https://user-images.githubusercontent.com/66883960/116785221-ececf500-aaca-11eb-871b-4ab5a9386c83.PNG)
+![PC_Builder](https://user-images.githubusercontent.com/66883960/116809140-3c84fc80-ab6f-11eb-8e9b-0de69f56146b.PNG)
+![DPS](https://user-images.githubusercontent.com/66883960/116809142-3d1d9300-ab6f-11eb-9219-a4123891dae0.PNG)
+
 
