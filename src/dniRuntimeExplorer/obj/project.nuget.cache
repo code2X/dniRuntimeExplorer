@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "kXOlj4gR2rio+Hhjtam2sDwqbjnfXKsw3AY0fboFZtjjWyPjlz9GKrpiQ7Cyz4sRoz9jMntvKOuDMoBmEyxEbg==",
+  "success": true,
+  "projectFilePath": "D:\\Github\\dniRuntimeExplorer\\src\\dniRuntimeExplorer\\dniRuntimeExplorer.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\家\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\家\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\家\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

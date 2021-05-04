@@ -1,0 +1,11 @@
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\bin\Release\netstandard2.0\dniRuntimeExplorer.deps.json
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\bin\Release\netstandard2.0\dniRuntimeExplorer.dll
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\bin\Release\netstandard2.0\dniRuntimeExplorer.pdb
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\bin\Release\netstandard2.0\ImGui.NETex.dll
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\obj\Release\netstandard2.0\dniRuntimeExplorer.csprojAssemblyReference.cache
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\obj\Release\netstandard2.0\dniRuntimeExplorer.AssemblyInfoInputs.cache
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\obj\Release\netstandard2.0\dniRuntimeExplorer.AssemblyInfo.cs
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\obj\Release\netstandard2.0\dniRuntimeExplorer.csproj.CoreCompileInputs.cache
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\obj\Release\netstandard2.0\dniRuntimeExplorer.csproj.CopyComplete
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\obj\Release\netstandard2.0\dniRuntimeExplorer.dll
+D:\Github\dniRuntimeExplorer\src\dniRuntimeExplorer\obj\Release\netstandard2.0\dniRuntimeExplorer.pdb

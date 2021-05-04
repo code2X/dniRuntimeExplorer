@@ -6,14 +6,10 @@ namespace dniRumtimeExplorer.Loader.UnityDoorstop
 {
     class Loader_UntiyDoorstop
     {
-        static bool isShow = false;
         static RuntimeExplorerApp m_Explorer;
 
         static void Main(string[] args)
         {
-            if (isShow == true)
-                return;
-
             List<string> unityAssemblyList = new List<string>();
 
             Utils.Caller.Try(() =>
@@ -28,7 +24,6 @@ namespace dniRumtimeExplorer.Loader.UnityDoorstop
                 }
 
                 m_Explorer.Run();
-                isShow = true;
             });
 
         }
@@ -72,5 +67,6 @@ namespace dniRumtimeExplorer.Loader.UnityDoorstop
 
             return result;
         }
+
     }
 }
