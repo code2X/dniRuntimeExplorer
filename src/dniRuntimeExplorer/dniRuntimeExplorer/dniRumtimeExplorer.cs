@@ -2,12 +2,13 @@
 using dniRumtimeExplorer.Window;
 using dniRumtimeExplorer.Reflection;
 using System.Collections.Generic;
+using ImGuiNET;
 
 namespace dniRumtimeExplorer
 {
     public class RuntimeExplorerApp : ImGuiEx.Application
     {
-        bool m_bShow = false;
+        bool m_bShow = true;
 
         static RuntimeExplorerApp __instance = new RuntimeExplorerApp();
         public static RuntimeExplorerApp Instance
@@ -53,6 +54,14 @@ namespace dniRumtimeExplorer
 
         protected override void OnGui()
         {
+            if (ImGui.IsKeyDown((int)ImGuiKey.End))
+            {
+                if (IsOpen == false)
+                    Open();
+                else
+                    Close();
+            }
+
             if (!m_bShow) return;
 
             Utils.Caller.Try(() =>
